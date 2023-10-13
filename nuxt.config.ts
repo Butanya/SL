@@ -1,13 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: '/ShoppingList/',
+    baseURL: '/SL/',
     buildAssetsDir: 'assets'
   },
 
   // target: "static",
   // router: {
-  //   base: "/SL/"
+  //  base: "/SL/"
   // },
   modules: [
     "tailwindcss",

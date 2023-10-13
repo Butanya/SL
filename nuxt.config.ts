@@ -7,7 +7,7 @@ export default defineNuxtConfig({
 
   // target: "static",
   // router: {
-  //   base: "/game-values/"
+  //   base: "/SL/"
   // },
   modules: [
     "tailwindcss",

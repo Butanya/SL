@@ -1,38 +1,21 @@
-# Game Values web UI widgets library
+# Shopping List Application Readme
 
-## Setup
+## Overview
 
-Install the dependencies:
+Welcome to the Shopping List Application! This application is designed to help you create and manage your shopping lists efficiently. Whether you're doing your weekly grocery shopping or planning for a special event, this application has got you covered.
 
-```bash
-# yarn
-yarn install
-```
+## Features
 
-## Development
+- **User-Friendly Interface:** The application provides an intuitive and user-friendly interface to make creating and managing your shopping lists a breeze.
+- **Add/Remove Items:** Easily add items to your shopping list, and remove them when you've purchased them.
+- **Check off Items:** Mark items as purchased with a simple tap or click, helping you keep track of your progress.
 
-Start the development server on http://localhost:3000
+## Getting Started
 
-```bash
-# yarn
-yarn dev
-```
 
-Then browse to http://localhost:3000 to see the homepage.
+1. **Adding Items:**
+   - To add items to your list, simply tap the "Add Item" button, enter the item name, quantity, and any notes.
 
-## Contributions
-We will pay for your contributions. Please check available tasks and contact us via `tech@game-values.com` if you would like to solve some of them.
+2. **Managing Your List:**
+   - Use the app's intuitive interface to manage and organize your shopping list. You can check off items when you purchase them and remove items you no longer need.
 
-## Tech stack
- - vue.js
- - postcss
- - nuxt js
- - headlessui
- - tailwindcss
- - heroicons
-
-## Licence
-
-This project is licensed under the terms of the Attribution-NonCommercial 3.0
-https://creativecommons.org/licenses/by-nc/3.0/
-> You may not use the material for commercial purposes

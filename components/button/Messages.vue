@@ -24,11 +24,12 @@
       @click="togglePurchased(item)"
       :key="item.id"
       class="static-class"
-      :class="{
-        strikeout: item.purchased,
-      }"
     >
-      {{item.label}}
+      <span v-if="item.purchased" @click="eraseItem(index)" class="erase-icon">
+        <span class="erase-cross">❌</span>
+        <span class="erase-text">{{item.label}}</span>
+      </span>
+      <span v-else>{{item.label}}</span>
     </li>
   </ul>
 
@@ -36,6 +37,7 @@
     Nothing to see here
   </p>
 </template>
+
 
 <script setup>
 import { ref, computed } from 'vue'
@@ -64,6 +66,10 @@ const doEdit = (e) => {
 
 const togglePurchased = (item) => {
   item.purchased = !item.purchased
+}
+
+const eraseItem = (index) => {
+  items.value.splice(index, 1);
 }
 </script>
 
@@ -212,12 +218,34 @@ li input {
 }
 
 .strikeout {
-  text-decoration: line-through;
+  text-decoration: line-through; /* Add strikeout only to item text, not the cross */
   color: #f9a6cf;
 }
 
 .strikeout:hover {
   color: #667a8a;
+}
+
+.erase-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.erase-cross {
+  color: #f00;
+  font-size: 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 55%; /* Adjust the vertical position */
+  transform: translateY(-50%); /* Center the cross vertically */
+  
+}
+
+.erase-text {
+  text-decoration: line-through;
+  color: #f9a6cf;
+  margin-left: 20px; /* Adjust the space between the cross and the item text */
 }
 
 </style>

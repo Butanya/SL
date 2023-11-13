@@ -23,12 +23,12 @@ export default defineNuxtConfig({
 
   css: ["~/assets/css/main.css"],
 
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {}
-    }
-  },
+  //postcss: {
+  //  plugins: {
+  //    tailwindcss: {},
+  //    autoprefixer: {}
+  //  }
+  //},
 
   // buildModules: [
   //   'nuxt-vite'
@@ -36,11 +36,11 @@ export default defineNuxtConfig({
   // vite: {
   //   build: true
   // },
-  build: {
-    transpile: ["@heroicons/vue"]
-  },
+  //build: {
+  //  transpile: ["@heroicons/vue"]
+  //},
 
-  devtools: {
-    enabled: true
-  }
+  //devtools: {
+  //  enabled: true
+  //}
 })

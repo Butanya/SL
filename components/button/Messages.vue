@@ -25,7 +25,7 @@
       :key="item.id"
       class="static-class"
     >
-      <span v-if="item.purchased" @click="eraseItem(index)" class="erase-icon">
+      <span v-if="item.purchased" @click="eraseItem(item)" class="erase-icon">
         <span class="erase-cross">❌</span>
         <span class="erase-text">{{item.label}}</span>
       </span>
@@ -37,7 +37,6 @@
     Nothing to see here
   </p>
 </template>
-
 
 <script setup>
 import { ref, computed } from 'vue'
@@ -60,16 +59,18 @@ const saveItem = () => {
 
 const doEdit = (e) => {
   editing.value = e
-  newItem.value = ""
- 
+  newItem.value = "" 
 }
 
 const togglePurchased = (item) => {
   item.purchased = !item.purchased
 }
 
-const eraseItem = (index) => {
-  items.value.splice(index, 1);
+const eraseItem = (item) => {
+  const index = items.value.indexOf(item);
+  if (index !== -1) {
+    items.value.splice(index, 1);
+  }
 }
 </script>
 
@@ -237,15 +238,14 @@ li input {
   font-size: 10px;
   cursor: pointer;
   position: absolute;
-  top: 55%; /* Adjust the vertical position */
-  transform: translateY(-50%); /* Center the cross vertically */
-  
+  top: 55%; 
+  transform: translateY(-50%);   
 }
 
 .erase-text {
   text-decoration: line-through;
   color: #f9a6cf;
-  margin-left: 20px; /* Adjust the space between the cross and the item text */
+  margin-left: 20px; 
 }
 
 </style>

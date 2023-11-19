@@ -8,28 +8,22 @@
   </div>
 
   <form class="add-item-form" v-if="editing" @submit.prevent="saveItem">
-    <input 
-      v-model.trim="newItem"
-      type="text"
-      placeholder="Add something"
-    >
-    <button :disabled="newItem.length < 1" class="btn btn-primary">
-      Save Item
-    </button>
+    <input v-model.trim="newItem" type="text" placeholder="Add something">
+    <button :disabled="newItem.length < 1" class="btn btn-primary">Save Item</button>
   </form>
  
   <ul>
-    <li 
-      v-for="(item, index) in reversedItems" 
-      @click="togglePurchased(item)"
-      :key="item.id"
-      class="static-class"
-    >
+    <li v-for="(item, index) in reversedItems" :key="item.id" class="static-class">
       <span v-if="item.purchased" @click="eraseItem(item)" class="erase-icon">
         <span class="erase-cross">❌</span>
-        <span class="erase-text">{{item.label}}</span>
       </span>
-      <span v-else>{{item.label}}</span>
+      <span
+        :class="{ 'strikeout': item.purchased }"
+        @click="togglePurchased(item)"
+        class="item-label"
+      >
+        {{ item.label }}
+      </span>
     </li>
   </ul>
 
@@ -39,40 +33,89 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
-const header = ref('Shopping List App')
-const editing = ref(false)
-const items = ref([
-  
-])
-const reversedItems = computed(() => [...items.value].reverse())
-const newItem = ref("")
+const header = ref('Shopping List App');
+const editing = ref(false);
+const items = ref([]);
+
+// Check if running in the browser before using localStorage
+const isBrowser = typeof window !== 'undefined';
+
+// Load from localStorage on component mount
+onMounted(() => {
+  if (isBrowser) {
+    const storedList = localStorage.getItem('shoppingList');
+    if (storedList) {
+      items.value = JSON.parse(storedList);
+    }
+  }
+});
+
+const reversedItems = computed(() => [...items.value].reverse());
+const newItem = ref('');
 
 const saveItem = () => {
   items.value.push({
     id: items.value.length + 1, 
     label: newItem.value,
-  })
-  newItem.value = ""
-}
+    purchased: false,
+  });
+  saveToLocalStorage();
+  newItem.value = '';
+};
 
 const doEdit = (e) => {
-  editing.value = e
-  newItem.value = "" 
-}
+  editing.value = e;
+  newItem.value = '';
+};
 
 const togglePurchased = (item) => {
-  item.purchased = !item.purchased
-}
+  item.purchased = !item.purchased;
+  saveToLocalStorage();
+};
 
 const eraseItem = (item) => {
-  const index = items.value.indexOf(item);
+  const index = items.value.findIndex(i => i === item);
   if (index !== -1) {
     items.value.splice(index, 1);
+    saveToLocalStorage();
   }
-}
+};
+
+const saveToLocalStorage = () => {
+  if (isBrowser) {
+    localStorage.setItem('shoppingList', JSON.stringify(items.value));
+  }
+};
+
+// Save to localStorage on component unmount
+onBeforeUnmount(() => {
+  saveToLocalStorage();
+});
 </script>
+
+
+<style scoped>
+.strikeout {
+  text-decoration: line-through;
+}
+
+.erase-cross {
+  color: #3498db;     
+}
+
+.erase-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-left: 22px;
+}
+
+.hidden {
+  display: none;
+}
+</style>
 
 <style>
 body {
@@ -209,13 +252,13 @@ li input {
 }
 
 .btn-cancel {
-  background: #ffc07a ! important;
-  color: #fff  ! important;
+  background: #ffc07a;
+  color: #fff;
 }
 
 .btn-cancel:hover {
-  background: #f9a6cf !important;
-  color: #fff !important;
+  background: #f9a6cf;
+  color: #fff;
 }
 
 .strikeout {
@@ -234,20 +277,18 @@ li input {
 }
 
 .erase-cross {
-  color: #f00;
-  font-size: 10px;
-  cursor: pointer;
-  position: absolute;
-  top: 55%; 
-  transform: translateY(-50%);   
+    color: #3498db;
+    font-size: 10px;
+    cursor: pointer;
+    position: absolute;
+    float: left;
+    margin-left: -20px;
+    top: -7px;
 }
+
 
 .erase-text {
   text-decoration: line-through;
-  color: #f9a6cf;
-  margin-left: 20px; 
+  color: #f9a6cf;  
 }
-
 </style>
-
-

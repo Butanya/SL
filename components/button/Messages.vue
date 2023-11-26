@@ -1,29 +1,35 @@
 <template>
   <div class="header">
     <h1>{{ header }}</h1>
-    <button v-if="editing" @click="doEdit(false)" class="btn btn-cancel">Cancel</button>
-    <button v-else class="btn btn-primary" @click="doEdit(true)" style="margin-left: 40px;">
+    <button v-if="editing" class="btn btn-cancel" @click="doEdit(false)">Cancel</button>
+    <button v-else class="btn btn-primary" style="margin-left: 40px;" @click="doEdit(true)">
       Add Item
     </button>
   </div>
 
-  <form class="add-item-form" v-if="editing" @submit.prevent="saveItem">
-    <input v-model.trim="newItem" type="text" placeholder="Add something">
-    <button :disabled="newItem.length < 1" class="btn btn-primary">Save Item</button>
+  <form v-if="editing" class="add-item-form" @submit.prevent="saveItem">
+    <input
+      v-model.trim="newItem"
+      placeholder="Add something"
+      type="text"
+    >
+    <button :disabled="newItem.length < 1" class="btn btn-primary">
+      Save Item
+    </button>
   </form>
- 
+
   <ul>
-    <li v-for="(item, index) in reversedItems" :key="item.id" class="static-class">
-      <span v-if="item.purchased" @click="eraseItem(item)" class="erase-icon">
-        <span class="erase-cross">❌</span>
+    <li
+      v-for="(item, index) in reversedItems"
+      :key="item.id"
+      class="static-class"
+      @click="togglePurchased(item)"
+    >
+      <span v-if="item.purchased" class="erase-icon">
+        <span class="erase-cross" @click="eraseItem(item)">❌</span>
+        <span class="erase-text">{{ item.label }}</span>
       </span>
-      <span
-        :class="{ 'strikeout': item.purchased }"
-        @click="togglePurchased(item)"
-        class="item-label"
-      >
-        {{ item.label }}
-      </span>
+      <span v-else>{{ item.label }}</span>
     </li>
   </ul>
 
@@ -33,89 +39,58 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, watchEffect } from "vue"
 
-const header = ref('Shopping List App');
-const editing = ref(false);
-const items = ref([]);
+const header = ref("Shopping List App")
+const editing = ref(false)
+const reversedItems = computed(() => [...items.value].reverse())
+const newItem = ref("")
 
-// Check if running in the browser before using localStorage
-const isBrowser = typeof window !== 'undefined';
-
-// Load from localStorage on component mount
 onMounted(() => {
-  if (isBrowser) {
-    const storedList = localStorage.getItem('shoppingList');
-    if (storedList) {
-      items.value = JSON.parse(storedList);
-    }
-  }
-});
+  items.value = loadItems(); // Load items once the component is mounted on the client side
+})
 
-const reversedItems = computed(() => [...items.value].reverse());
-const newItem = ref('');
+const loadItems = () => {
+  // Ensure this code runs only on the client-side
+  if (typeof window !== "undefined") {
+    return JSON.parse(window.localStorage.getItem('shoppingItems')) || [];
+  }
+  return [];
+}
+
+const items = ref(loadItems())
+
+watchEffect(() => {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem('shoppingItems', JSON.stringify(items.value));
+  }
+})
 
 const saveItem = () => {
   items.value.push({
-    id: items.value.length + 1, 
+    id: items.value.length + 1,
     label: newItem.value,
     purchased: false,
-  });
-  saveToLocalStorage();
-  newItem.value = '';
-};
+  })
+  newItem.value = ""
+}
 
 const doEdit = (e) => {
-  editing.value = e;
-  newItem.value = '';
-};
+  editing.value = e
+  newItem.value = ""
+}
 
 const togglePurchased = (item) => {
-  item.purchased = !item.purchased;
-  saveToLocalStorage();
-};
+  item.purchased = !item.purchased
+}
 
 const eraseItem = (item) => {
-  const index = items.value.findIndex(i => i === item);
+  const index = items.value.indexOf(item)
   if (index !== -1) {
-    items.value.splice(index, 1);
-    saveToLocalStorage();
+    items.value.splice(index, 1)
   }
-};
-
-const saveToLocalStorage = () => {
-  if (isBrowser) {
-    localStorage.setItem('shoppingList', JSON.stringify(items.value));
-  }
-};
-
-// Save to localStorage on component unmount
-onBeforeUnmount(() => {
-  saveToLocalStorage();
-});
+}
 </script>
-
-
-<style scoped>
-.strikeout {
-  text-decoration: line-through;
-}
-
-.erase-cross {
-  color: #3498db;     
-}
-
-.erase-icon {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-left: 22px;
-}
-
-.hidden {
-  display: none;
-}
-</style>
 
 <style>
 body {
@@ -123,7 +98,7 @@ body {
   height: 100vh;
   width: 100vw;
   font-family: system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,13 +227,13 @@ li input {
 }
 
 .btn-cancel {
-  background: #ffc07a;
-  color: #fff;
+  background: #ffc07a ! important;
+  color: #fff ! important;
 }
 
 .btn-cancel:hover {
-  background: #f9a6cf;
-  color: #fff;
+  background: #f9a6cf !important;
+  color: #fff !important;
 }
 
 .strikeout {
@@ -277,18 +252,20 @@ li input {
 }
 
 .erase-cross {
-    color: #3498db;
-    font-size: 10px;
-    cursor: pointer;
-    position: absolute;
-    float: left;
-    margin-left: -20px;
-    top: -7px;
+  color: #f00;
+  font-size: 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 55%;
+  transform: translateY(-50%);
 }
-
 
 .erase-text {
   text-decoration: line-through;
-  color: #f9a6cf;  
+  color: #f9a6cf;
+  margin-left: 20px;
 }
+
 </style>
+
+

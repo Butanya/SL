@@ -1,0 +1,1 @@
+const e={GameCard:{like:"Like"},GeneralStatistics:{goods:"number of goods",deals:"amount of deals",online:"online",users:"all"}},n={comp:e},o={GameCard:{like:"Gefällt mir"},GeneralStatistics:{goods:"Anzahl von Waren",deals:"Anzahl von Geschäften",online:"online",users:"alle"}},s={comp:o},l=()=>({legacy:!1,locale:"en",messages:{en:n,de:s}});export{l as default};
